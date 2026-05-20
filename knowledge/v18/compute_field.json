@@ -1,0 +1,63 @@
+{
+    "topic": "compute_field",
+    "label": "Champ calculé Odoo 18",
+    "imports": [
+        "from odoo import api, fields, models"
+    ],
+    "rules": [
+        "MUST: toujours itérer avec 'for rec in self'.",
+        "MUST: store=True si le champ est utilisé en recherche, tri ou filtre.",
+        "MUST: @api.depends doit lister TOUS les champs utilisés dans le calcul, y compris les relations.",
+        "MUST: utiliser mapped() pour agréger les champs one2many.",
+        "MUST: si le champ doit rester modifiable, ajouter une méthode inverse.",
+        "FORBIDDEN: Ne jamais effectuer de side effects (write, create, unlink) dans un compute."
+    ],
+    "anti_patterns": [
+        "FORBIDDEN: Self.amount = sum(...) → sans boucle, ne fonctionne pas.",
+        "FORBIDDEN: @api.multi → supprimé depuis Odoo 14.",
+        "FORBIDDEN: @api.one → supprimé depuis Odoo 12.",
+        "FORBIDDEN: @api.depends('line_ids') au lieu de 'line_ids.price_subtotal'.",
+        "FORBIDDEN: Définir required=True sur un champ compute sans store=True et inverse."
+    ],
+    "trigger_keywords": [
+        "compute",
+        "compute_field",
+        "depends",
+        "@api.depends",
+        "compute_sudo",
+        "computed"
+    ],
+    "prompt_injection_template": "Utilise ces règles et ces anti-patterns pour générer un prompt d'injection précis pour un agent codeur Odoo. Inclue uniquement les instructions techniques les plus pertinentes.\nPlace {rules}, {anti_patterns} et {snippets} dans le prompt final.",
+    "snippets": [
+        {
+            "id": "compute_field_reference",
+            "title": "Exemple de référence",
+            "when_to_use": "Use this reference when implementing Champ calculé Odoo 18 patterns.",
+            "code": "class MyModel(models.Model):\n    _name = 'my.model'\n\n    total = fields.Float(string='Total', compute='_compute_total', store=True)\n\n    @api.depends('line_ids.price_subtotal')\n    def _compute_total(self):\n        for rec in self:\n            rec.total = sum(line.price_subtotal for line in rec.line_ids)"
+        }
+    ],
+    "advanced": {
+        "precompute": {
+            "trigger_keywords": [
+                "precompute",
+                "avant insertion",
+                "new record"
+            ],
+            "snippet": "precompute=True",
+            "warning": "Uniquement pour les champs calculés sur les nouvelles lignes avant sauvegarde"
+        }
+    },
+    "related_topics": [
+        "onchange"
+    ],
+    "difficulty": "beginner",
+    "breaking_changes": [
+        "v18 retains Odoo 17 API semantics while continuing to remove legacy patterns.",
+        "Prefer modern recordset methods and explicit route/auth declarations in Odoo 18."
+    ],
+    "last_updated": "2026-05-20",
+    "version": "18",
+    "context": {
+        "reference": "Code examples were moved to the snippets array for structured injection."
+    }
+}

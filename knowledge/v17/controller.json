@@ -1,0 +1,55 @@
+{
+    "topic": "controller",
+    "label": "Contrôleur HTTP Odoo 17",
+    "imports": [
+        "from odoo import http",
+        "from odoo.http import request"
+    ],
+    "rules": [
+        "MUST: use `type='json'` for JSON routes and return structured JSON.",
+        "MUST: use `type='http'` for HTML routes and accept form/query params.",
+        "MUST: declare `auth` explicitly on @http.route definitions.",
+        "MUST: declare `auth` explicitly on @http.route definitions.",
+        "MUST: set `website=True` for website routes when rendering public page templates.",
+        "MUST: utiliser request.env pour accéder à l'ORM",
+        "MUST: sudo() si besoin d'accéder aux données sans vérification de droits"
+    ],
+    "anti_patterns": [
+        "FORBIDDEN: From odoo.http import Response pour JSON → inutile avec type='json'",
+        "FORBIDDEN: do not omit auth='...' → défaut 'user', bloque les accès publics",
+        "FORBIDDEN: Json.dumps() dans un type='json' → double encodage",
+        "FORBIDDEN: Request.cr.commit() → Odoo gère les transactions automatiquement"
+    ],
+    "trigger_keywords": [
+        "controller",
+        "@http.route",
+        "route",
+        "request",
+        "http",
+        "type=json",
+        "type=http"
+    ],
+    "prompt_injection_template": "Utilise ces règles et ces anti-patterns pour générer un prompt d'injection précis pour un agent codeur Odoo. Inclue uniquement les instructions techniques les plus pertinentes.\nPlace {rules}, {anti_patterns} et {snippets} dans le prompt final.",
+    "snippets": [
+        {
+            "id": "controller_reference",
+            "title": "Exemple de référence",
+            "when_to_use": "Use this reference when implementing Contrôleur HTTP Odoo 17 patterns.",
+            "code": "class MyController(http.Controller):\n\n    @http.route('/my_module/api/data', type='json', auth='user', methods=['POST'])\n    def api_data(self, **post):\n        records = request.env['my.model'].search([('active', '=', True)])\n        return {'count': len(records), 'records': records.read(['name'])}\n\n    @http.route('/my_module/page', type='http', auth='public', website=True)\n    def page(self, **kwargs):\n        return request.render('my_module.my_template', {'records': request.env['my.model'].search([])})"
+        }
+    ],
+    "related_topics": [
+        "security",
+        "report_qweb"
+    ],
+    "difficulty": "intermediate",
+    "breaking_changes": [
+        "v17 is the base target for this topic with stable Odoo 17 APIs.",
+        "Avoid legacy patterns older than Odoo 17 such as api.one and manual transaction commits."
+    ],
+    "last_updated": "2026-05-20",
+    "version": "17",
+    "context": {
+        "reference": "Code examples were moved to the snippets array for structured injection."
+    }
+}

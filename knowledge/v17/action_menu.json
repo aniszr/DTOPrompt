@@ -1,0 +1,58 @@
+{
+    "topic": "action_menu",
+    "label": "Actions et Menus (ir.actions & menuitem)",
+    "imports": [],
+    "rules": [
+        "MUST: toujours définir view_mode avec au moins tree,form.",
+        "MUST: lier l'action au menuitem via l'attribut 'action'.",
+        "MUST: utiliser des IDs uniques et descriptifs.",
+        "MUST: odoo 17: Menus supportent la définition de web_icon pour les applications racine."
+    ],
+    "anti_patterns": [
+        "FORBIDDEN: Mettre un parent inexistant pour un menuitem.",
+        "FORBIDDEN: do not omit de déclarer le fichier XML dans __manifest__.py."
+    ],
+    "trigger_keywords": [
+        "action",
+        "menu",
+        "action menu",
+        "ir.actions.act_window",
+        "menuitem",
+        "action_menu",
+        "act_window"
+    ],
+    "prompt_injection_template": "Utilise ces règles et ces anti-patterns pour générer un prompt d'injection précis pour un agent codeur Odoo. Inclue uniquement les instructions techniques les plus pertinentes.\nPlace {rules}, {anti_patterns} et {snippets} dans le prompt final.",
+    "snippets": [
+        {
+            "id": "action_menu_reference",
+            "title": "Exemple de référence",
+            "when_to_use": "Use this reference when implementing Actions et Menus (ir.actions & menuitem) patterns.",
+            "code": "<record id=\"action_my_model\" model=\"ir.actions.act_window\">\n    <field name=\"name\">My Model</field>\n    <field name=\"res_model\">my.model</field>\n    <field name=\"view_mode\">tree,form</field>\n    <field name=\"target\">current</field>\n</record>\n\n<menuitem id=\"menu_my_model_root\" name=\"My App\"/>\n<menuitem id=\"menu_my_model\" name=\"My Model\" parent=\"menu_my_model_root\" action=\"action_my_model\"/>"
+        }
+    ],
+    "advanced": {
+        "server_action": {
+            "trigger_keywords": [
+                "action serveur",
+                "ir.actions.server",
+                "python code action"
+            ],
+            "snippet": "<record id=\"action_server\" model=\"ir.actions.server\">\n    <field name=\"model_id\" ref=\"model_custom_model\"/>\n    <field name=\"state\">code</field>\n    <field name=\"code\">action = records.my_method()</field>\n</record>",
+            "warning": "Les actions serveur nécessitent la définition du champ model_id et state='code'."
+        }
+    },
+    "related_topics": [
+        "view_tree",
+        "view_form"
+    ],
+    "difficulty": "beginner",
+    "breaking_changes": [
+        "v17 is the base target for this topic with stable Odoo 17 APIs.",
+        "Avoid legacy patterns older than Odoo 17 such as api.one and manual transaction commits."
+    ],
+    "last_updated": "2026-05-20",
+    "version": "17",
+    "context": {
+        "reference": "Code examples were moved to the snippets array for structured injection."
+    }
+}

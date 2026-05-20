@@ -1,0 +1,54 @@
+{
+    "topic": "constraint",
+    "label": "Contraintes Python et SQL Odoo 17",
+    "imports": [
+        "from odoo import api, fields, models",
+        "from odoo.exceptions import ValidationError",
+        "from odoo.tools.translate import _"
+    ],
+    "rules": [
+        "MUST: @api.constrains déclenche à chaque write/create sur les champs listés",
+        "MUST: toujours itérer avec 'for rec in self'",
+        "MUST: lever ValidationError (jamais UserError) pour les contraintes",
+        "MUST: préfixer la méthode par _check_",
+        "MUST: _sql_constraints = liste de tuples (nom, sql, message)",
+        "MUST: contrainte SQL = plus performante que Python pour les cas simples"
+    ],
+    "anti_patterns": [
+        "FORBIDDEN: Raise UserError dans un @api.constrains → utiliser ValidationError",
+        "FORBIDDEN: @api.constrains() sans champs → ne se déclenche jamais",
+        "FORBIDDEN: Accéder à des champs non listés dans @api.constrains → non garanti",
+        "FORBIDDEN: do not omit le 'for rec in self' → crash en multi-record"
+    ],
+    "trigger_keywords": [
+        "constraint",
+        "sql_constraint",
+        "record rule",
+        "@api.constrains",
+        "check",
+        "check constraints"
+    ],
+    "prompt_injection_template": "Utilise ces règles et ces anti-patterns pour générer un prompt d'injection précis pour un agent codeur Odoo. Inclue uniquement les instructions techniques les plus pertinentes.\nPlace {rules}, {anti_patterns} et {snippets} dans le prompt final.",
+    "snippets": [
+        {
+            "id": "constraint_reference",
+            "title": "Exemple de référence",
+            "when_to_use": "Use this reference when implementing Contraintes Python et SQL Odoo 17 patterns.",
+            "code": "class MyModel(models.Model):\n    _name = 'my.model'\n\n    name = fields.Char(required=True)\n\n    _sql_constraints = [\n        ('name_unique', 'unique(name)', 'Le nom doit être unique.')\n    ]\n\n    @api.constrains('name')\n    def _check_name(self):\n        for rec in self:\n            if not rec.name.strip():\n                raise ValidationError('Le nom ne peut pas être vide.')"
+        }
+    ],
+    "related_topics": [
+        "compute_field",
+        "security"
+    ],
+    "difficulty": "beginner",
+    "breaking_changes": [
+        "v17 is the base target for this topic with stable Odoo 17 APIs.",
+        "Avoid legacy patterns older than Odoo 17 such as api.one and manual transaction commits."
+    ],
+    "last_updated": "2026-05-20",
+    "version": "17",
+    "context": {
+        "reference": "Code examples were moved to the snippets array for structured injection."
+    }
+}

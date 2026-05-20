@@ -1,0 +1,63 @@
+{
+    "topic": "migration",
+    "label": "Migration Odoo 19",
+    "imports": [
+        "from odoo.tools.sql import rename_column, create_column, column_exists, table_exists"
+    ],
+    "rules": [
+        "MUST: les scripts de migration vont dans le dossier migrations/X.Y.Z.0.0/",
+        "MUST: pre_migrate.py : n'utiliser que cr (SQL brut), pas l'ORM",
+        "MUST: post_migrate.py : utiliser env (ORM disponible après chargement du module)",
+        "MUST: toujours vérifier column_exists() ou table_exists() avant ALTER",
+        "MUST: utiliser les utilitaires odoo.tools.sql (rename_column, create_column, drop_column)",
+        "MUST: déclarer 'version' dans __manifest__.py — obligatoire pour déclencher les scripts",
+        "MUST: en Odoo 19, les scripts de migration supportent le mode 'test' via --test-enable"
+    ],
+    "anti_patterns": [
+        "FORBIDDEN: ALTER TABLE manuel — utiliser rename_column() ou create_column()",
+        "FORBIDDEN: Script sans vérification de version (if not version: return) — se déclenche alors à chaque installation",
+        "FORBIDDEN: do not use self ou l'ORM dans pre_migrate.py — l'ORM n'est pas encore chargé",
+        "FORBIDDEN: do not omit de déclarer 'version' dans __manifest__.py — les scripts ne se déclencheront jamais"
+    ],
+    "trigger_keywords": [
+        "migration",
+        "data migration",
+        "upgrade",
+        "migrate",
+        "module update"
+    ],
+    "prompt_injection_template": "Utilise ces règles et ces anti-patterns pour générer un prompt d'injection précis pour un agent codeur Odoo. Inclue uniquement les instructions techniques les plus pertinentes.\nPlace {rules}, {anti_patterns} et {snippets} dans le prompt final.",
+    "snippets": [
+        {
+            "id": "migration_reference",
+            "title": "Exemple de référence",
+            "when_to_use": "Use this reference when implementing Migration Odoo 19 patterns.",
+            "code": "# migrations/17.0.1.1/pre-migrate.py\nfrom odoo import api, SUPERUSER_ID\n\ndef migrate(cr, version):\n    if not version:\n        return\n    cr.execute('ALTER TABLE my_table ADD COLUMN new_field BOOLEAN DEFAULT FALSE')\n\n# migrations/17.0.1.1/post-migrate.py\nfrom odoo import api, SUPERUSER_ID\n\ndef migrate(cr, version):\n    env = api.Environment(cr, SUPERUSER_ID, {})\n    records = env['my.model'].search([])\n    records.write({'state': 'done'})"
+        }
+    ],
+    "advanced": {
+        "hook": {
+            "trigger_keywords": [
+                "hook",
+                "pre_init",
+                "post_init",
+                "init"
+            ],
+            "snippet": "'pre_init_hook': 'pre_init_hook'",
+            "warning": "Utiliser les hooks pour des opérations globales avant/après l'installation du module"
+        }
+    },
+    "related_topics": [
+        "model"
+    ],
+    "difficulty": "advanced",
+    "breaking_changes": [
+        "v19 requires Python 3.12-compatible syntax and stronger modern ORM practices.",
+        "Avoid legacy internal APIs, manual request.CR commits, and deprecated controller patterns in Odoo 19."
+    ],
+    "last_updated": "2026-05-20",
+    "version": "19",
+    "context": {
+        "reference": "Code examples were moved to the snippets array for structured injection."
+    }
+}

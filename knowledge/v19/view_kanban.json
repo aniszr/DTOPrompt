@@ -1,0 +1,44 @@
+{
+    "topic": "view_kanban",
+    "label": "Vue Kanban Odoo 19",
+    "imports": [],
+    "rules": [
+        "MUST: en v19, le template racine s'appelle 'card' et non plus 'kanban-box'",
+        "MUST: les champs n'ont plus besoin d'être pré-déclarés hors du <templates> en v19 OWL",
+        "MUST: quick_create=\"true\" permet la création rapide dans la colonne",
+        "MUST: la structure CSS est simplifiée (plus besoin du grand div oe_kanban_card externe)"
+    ],
+    "anti_patterns": [
+        "FORBIDDEN: T-name=\"kanban-box\" → OBSOLÈTE en v19, la vue cassera ou utilisera un fallback. Utiliser t-name=\"card\"",
+        "FORBIDDEN: Déclarer <field/> hors template → inutile en v19",
+        "FORBIDDEN: Structure HTML lourde v16 → simplifier le DOM"
+    ],
+    "trigger_keywords": [
+        "kanban",
+        "view_kanban",
+        "kanban view",
+        "cards"
+    ],
+    "prompt_injection_template": "Utilise ces règles et ces anti-patterns pour générer un prompt d'injection précis pour un agent codeur Odoo. Inclue uniquement les instructions techniques les plus pertinentes.\nPlace {rules}, {anti_patterns} et {snippets} dans le prompt final.",
+    "snippets": [
+        {
+            "id": "view_kanban_reference",
+            "title": "Exemple de référence",
+            "when_to_use": "Use this reference when implementing Vue Kanban Odoo 19 patterns.",
+            "code": "<record id=\"view_kanban_my_model\" model=\"ir.ui.view\">\n    <field name=\"name\">my.model.kanban</field>\n    <field name=\"model\">my.model</field>\n    <field name=\"arch\" type=\"xml\">\n        <kanban>\n            <templates>\n                <t t-name=\"kanban-box\">\n                    <div class=\"oe_kanban_global_click\">\n                        <strong><t t-esc=\"record.name.raw_value\"/></strong>\n                        <div><t t-esc=\"record.state.raw_value\"/></div>\n                    </div>\n                </t>\n            </templates>\n        </kanban>\n    </field>\n</record>"
+        }
+    ],
+    "related_topics": [
+        "view_tree"
+    ],
+    "difficulty": "intermediate",
+    "breaking_changes": [
+        "v19 requires Python 3.12-compatible syntax and stronger modern ORM practices.",
+        "Avoid legacy internal APIs, manual request.CR commits, and deprecated controller patterns in Odoo 19."
+    ],
+    "last_updated": "2026-05-20",
+    "version": "19",
+    "context": {
+        "reference": "Code examples were moved to the snippets array for structured injection."
+    }
+}

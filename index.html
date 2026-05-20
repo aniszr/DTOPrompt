@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Odoo Prompt Compiler</title>
+  <link rel="stylesheet" href="static/style.css">
+</head>
+<body>
+  <div class="app-container">
+    <header>
+      <div class="logo">
+        <span class="logo-icon">⚙️</span>
+        <h1>Odoo Prompt Compiler</h1>
+      </div>
+      
+      <!-- Version Selector -->
+      <div class="version-selector">
+        <label for="odoo-version">Version Odoo :</label>
+        <select id="odoo-version" onchange="setVersion(this.value)">
+          <option value="">-- Choisir --</option>
+          <option value="17">Odoo 17</option>
+          <option value="18">Odoo 18</option>
+          <option value="19">Odoo 19</option>
+        </select>
+        <span id="version-badge" class="badge hidden"></span>
+      </div>
+      
+      <!-- API Key Modal Trigger -->
+      <button class="btn-secondary" onclick="showApiConfigModal()">🔑 Clé API Claude</button>
+    </header>
+
+    <main>
+      <div class="input-section">
+        <label for="user-input" class="section-title">De quoi avez-vous besoin ?</label>
+        <textarea id="user-input" placeholder="Ex: Je veux un champ calculé qui somme les lignes de commande..."></textarea>
+        
+        <div class="action-bar">
+          <button class="btn-primary" onclick="optimizePrompt()" id="generate-btn">
+            ✨ Compiler & Générer
+          </button>
+        </div>
+      </div>
+
+      <div class="output-section">
+        <!-- Preview of the compiled prompt -->
+        <details id="prompt-preview-block" class="preview-block">
+          <summary>🔍 1. Voir le contexte brut compilé (Zéro IA)</summary>
+          <pre id="compiled-prompt-preview">Le contexte compilé apparaîtra ici...</pre>
+        </details>
+
+        <!-- Final Refined Prompt output -->
+        <div class="result-block">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+            <h3 class="section-title">✨ Prompt Optimisé (Prêt à copier)</h3>
+            <button class="btn-secondary" onclick="copyToClipboard()" id="copy-btn" style="padding: 0.5rem 1rem; font-size: 0.9rem;">📋 Copier</button>
+          </div>
+          <div id="token-stats" class="token-stats" style="margin-bottom:0.5rem; color:#666; display:none;"></div>
+          <pre id="output">Le prompt parfaitement optimisé par l'IA Refiner apparaîtra ici...</pre>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Modal API Key -->
+  <div id="apiModal" class="modal">
+    <div class="modal-content">
+      <h2>Configuration du Refiner IA</h2>
+      <p>Choisissez votre modèle IA pour affiner le prompt et entrez la clé API correspondante.</p>
+      
+      <label for="aiProvider" style="font-weight: 500;">Fournisseur IA :</label>
+      <select id="aiProvider" onchange="updateApiKeyPlaceholder()" style="width: 100%;">
+        <option value="anthropic">Anthropic (Claude 3.5 Sonnet)</option>
+        <option value="openai">OpenAI (GPT-4o Mini)</option>
+        <option value="chatgpt">OpenAI ChatGPT</option>
+        <option value="gemini">Google (Gemini 2.5 Flash)</option>
+      </select>
+
+      <input type="password" id="apiKeyInput" placeholder="sk-ant-...">
+      
+      <div class="modal-actions">
+        <button class="btn-secondary" onclick="hideApiConfigModal()">Annuler</button>
+        <button class="btn-primary" onclick="saveApiConfig()">Enregistrer</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="static/js/app.js"></script>
+</body>
+</html>

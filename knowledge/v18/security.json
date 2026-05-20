@@ -1,0 +1,50 @@
+{
+    "topic": "security",
+    "label": "Sécurité et droits d'accès Odoo 18",
+    "imports": [],
+    "rules": [
+        "MUST: en v18 utiliser company_ids (pluriel) au lieu de company_id dans les record rules multi-company",
+        "MUST: créer une catégorie de module pour regrouper les groupes dans Settings",
+        "MUST: base.group_user",
+        "MUST: model_id:id = model_ + nom du modèle avec _ au lieu de .",
+        "MUST: record rules = filtrage row-level, ACL = filtrage model-level",
+        "MUST: accessError, même si record rule OK"
+    ],
+    "anti_patterns": [
+        "FORBIDDEN: Company_id dans domain_force au lieu de company_ids → erreur multi-company v18",
+        "FORBIDDEN: do not omit le fichier ir.model.access.csv → AccessError pour tous sauf admin",
+        "FORBIDDEN: Perm_unlink=1 pour group_user → les utilisateurs peuvent supprimer",
+        "FORBIDDEN: do not omit de référencer security/ dans __manifest__.py"
+    ],
+    "trigger_keywords": [
+        "security",
+        "access rights",
+        "ir.model.access",
+        "record rules",
+        "groups",
+        "acl"
+    ],
+    "prompt_injection_template": "Utilise ces règles et ces anti-patterns pour générer un prompt d'injection précis pour un agent codeur Odoo. Inclue uniquement les instructions techniques les plus pertinentes.\nPlace {rules}, {anti_patterns} et {snippets} dans le prompt final.",
+    "snippets": [
+        {
+            "id": "security_reference",
+            "title": "Exemple de référence",
+            "when_to_use": "Use this reference when implementing Sécurité et droits d'accès Odoo 18 patterns.",
+            "code": "<record id=\"access_my_model_user\" model=\"ir.model.access\">\n    <field name=\"name\">my.model user</field>\n    <field name=\"model_id\" ref=\"model_my_model\"/>\n    <field name=\"group_id\" ref=\"base.group_user\"/>\n    <field name=\"perm_read\" eval=\"True\"/>\n    <field name=\"perm_write\" eval=\"True\"/>\n    <field name=\"perm_create\" eval=\"False\"/>\n    <field name=\"perm_unlink\" eval=\"False\"/>\n</record>"
+        }
+    ],
+    "related_topics": [
+        "wizard",
+        "controller"
+    ],
+    "difficulty": "intermediate",
+    "breaking_changes": [
+        "v18 retains Odoo 17 API semantics while continuing to remove legacy patterns.",
+        "Prefer modern recordset methods and explicit route/auth declarations in Odoo 18."
+    ],
+    "last_updated": "2026-05-20",
+    "version": "18",
+    "context": {
+        "reference": "Code examples were moved to the snippets array for structured injection."
+    }
+}

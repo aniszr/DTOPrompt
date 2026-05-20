@@ -1,0 +1,51 @@
+{
+    "topic": "migration",
+    "label": "Script de migration Odoo 18",
+    "imports": [
+        "from odoo import api, SUPERUSER_ID",
+        "from odoo.tools.sql import column_exists, rename_column, create_column"
+    ],
+    "rules": [
+        "MUST: dossier: migrations/<version>/pre-migrate.py ou post-migrate.py",
+        "MUST: aVANT le chargement du modèle (SQL brut)",
+        "MUST: aPRÈS le chargement du modèle (ORM disponible)",
+        "MUST: create_column() disponible en v18 pour ajout optimisé de colonnes",
+        "MUST: v18: convertir attrs vers invisible/readonly/required direct",
+        "MUST: toujours vérifier 'if not version: return'"
+    ],
+    "anti_patterns": [
+        "FORBIDDEN: do not use l'ORM dans pre-migrate → le modèle n'est pas encore chargé",
+        "FORBIDDEN: do not omit d'incrémenter la version → migration ignorée",
+        "FORBIDDEN: Cr.commit() dans le script → Odoo gère la transaction",
+        "FORBIDDEN: Ne pas migrer les attrs vers la nouvelle syntaxe v18"
+    ],
+    "trigger_keywords": [
+        "migration",
+        "data migration",
+        "upgrade",
+        "migrate",
+        "module update"
+    ],
+    "prompt_injection_template": "Utilise ces règles et ces anti-patterns pour générer un prompt d'injection précis pour un agent codeur Odoo. Inclue uniquement les instructions techniques les plus pertinentes.\nPlace {rules}, {anti_patterns} et {snippets} dans le prompt final.",
+    "snippets": [
+        {
+            "id": "migration_reference",
+            "title": "Exemple de référence",
+            "when_to_use": "Use this reference when implementing Script de migration Odoo 18 patterns.",
+            "code": "# migrations/17.0.1.1/pre-migrate.py\nfrom odoo import api, SUPERUSER_ID\n\ndef migrate(cr, version):\n    if not version:\n        return\n    cr.execute('ALTER TABLE my_table ADD COLUMN new_field BOOLEAN DEFAULT FALSE')\n\n# migrations/17.0.1.1/post-migrate.py\nfrom odoo import api, SUPERUSER_ID\n\ndef migrate(cr, version):\n    env = api.Environment(cr, SUPERUSER_ID, {})\n    records = env['my.model'].search([])\n    records.write({'state': 'done'})"
+        }
+    ],
+    "related_topics": [
+        "inheritance"
+    ],
+    "difficulty": "advanced",
+    "breaking_changes": [
+        "v18 retains Odoo 17 API semantics while continuing to remove legacy patterns.",
+        "Prefer modern recordset methods and explicit route/auth declarations in Odoo 18."
+    ],
+    "last_updated": "2026-05-20",
+    "version": "18",
+    "context": {
+        "reference": "Code examples were moved to the snippets array for structured injection."
+    }
+}

@@ -1,0 +1,60 @@
+{
+    "topic": "cron",
+    "label": "Tâches Planifiées (ir.cron)",
+    "imports": [],
+    "rules": [
+        "MUST: la méthode appelée (définie dans 'code') doit être décorée avec @api.model.",
+        "MUST: toujours utiliser ref=\"model_nom_du_modele_avec_underscores\" pour le model_id.",
+        "FORBIDDEN: Gérer les gros volumes de données par lots (batching) pour éviter les timeouts.",
+        "MUST: odoo 17: Les crons en échec loguent plus de détails, gardez le code robuste.",
+        "MUST: odoo 18: Support avancé pour les triggers de cron conditionnels.",
+        "MUST: odoo 19: Les crons utilisent des timeouts plus stricts, favorisez le batching avec commit()."
+    ],
+    "anti_patterns": [
+        "FORBIDDEN: Faire un cron qui tourne trop souvent (ex: chaque minute) pour des tâches lourdes.",
+        "FORBIDDEN: Appeler des méthodes qui nécessitent l'interface utilisateur ou `self.env.user`."
+    ],
+    "trigger_keywords": [
+        "cron",
+        "ir.cron",
+        "scheduled action",
+        "scheduler",
+        "cron job",
+        "scheduled"
+    ],
+    "prompt_injection_template": "Utilise ces règles et ces anti-patterns pour générer un prompt d'injection précis pour un agent codeur Odoo. Inclue uniquement les instructions techniques les plus pertinentes.\nPlace {rules}, {anti_patterns} et {snippets} dans le prompt final.",
+    "snippets": [
+        {
+            "id": "cron_reference",
+            "title": "Exemple de référence",
+            "when_to_use": "Use this reference when implementing Tâches Planifiées (ir.cron) patterns.",
+            "code": "class MyModel(models.Model):\n    _name = 'my.model'\n\n    @api.model\n    def _cron_update_status(self):\n        records = self.search([('state', '=', 'pending')])\n        records.write({'state': 'done'})\n\n# ir.cron record example\n<record id=\"ir_cron_update_status\" model=\"ir.cron\">\n    <field name=\"name\">Update My Model Status</field>\n    <field name=\"model_id\" ref=\"model_my_model\"/>\n    <field name=\"state\">code</field>\n    <field name=\"code\">model._cron_update_status()</field>\n    <field name=\"interval_number\">1</field>\n    <field name=\"interval_type\">days</field>\n</record>"
+        }
+    ],
+    "advanced": {
+        "batching": {
+            "trigger_keywords": [
+                "limit",
+                "lot",
+                "batch",
+                "timeout",
+                "grand volume"
+            ],
+            "snippet": "records = self.search([('state', '=', 'draft')], limit=500)",
+            "warning": "Assurez-vous de limiter la requête pour éviter les timeouts de cron et d'appeler env.cr.commit() si nécessaire."
+        }
+    },
+    "related_topics": [
+        "model"
+    ],
+    "difficulty": "intermediate",
+    "breaking_changes": [
+        "v19 requires Python 3.12-compatible syntax and stronger modern ORM practices.",
+        "Avoid legacy internal APIs, manual request.CR commits, and deprecated controller patterns in Odoo 19."
+    ],
+    "last_updated": "2026-05-20",
+    "version": "19",
+    "context": {
+        "reference": "Code examples were moved to the snippets array for structured injection."
+    }
+}

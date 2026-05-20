@@ -1,0 +1,49 @@
+{
+    "topic": "view_form",
+    "label": "Vue formulaire Odoo 18 (avec invisible simplifié)",
+    "imports": [],
+    "rules": [
+        "MUST: en v18, invisible='condition' remplace attrs={'invisible': [('field','=',val)]}",
+        "MUST: syntaxe directe: invisible=\"state != 'draft'\" au lieu de attrs=",
+        "MUST: attrs est DÉPRÉCIÉ en v18 — utiliser invisible/readonly/required directement",
+        "MUST: groups='group_xml_id' pour la visibilité par groupe",
+        "MUST: <notebook>",
+        "MUST: chatter en dehors de <sheet> mais dans <form>"
+    ],
+    "anti_patterns": [
+        "FORBIDDEN: Attrs={'invisible': [('state','!=','draft')]} → déprécié en v18, utiliser invisible=",
+        "FORBIDDEN: Mettre le chatter dans <sheet> → mauvais placement",
+        "FORBIDDEN: do not omit le <sheet> → mise en page cassée",
+        "FORBIDDEN: do not use domain au lieu de invisible pour cacher des champs"
+    ],
+    "trigger_keywords": [
+        "form",
+        "view_form",
+        "form view",
+        "record form",
+        "field view"
+    ],
+    "prompt_injection_template": "Utilise ces règles et ces anti-patterns pour générer un prompt d'injection précis pour un agent codeur Odoo. Inclue uniquement les instructions techniques les plus pertinentes.\nPlace {rules}, {anti_patterns} et {snippets} dans le prompt final.",
+    "snippets": [
+        {
+            "id": "view_form_reference",
+            "title": "Exemple de référence",
+            "when_to_use": "Use this reference when implementing Vue formulaire Odoo 18 (avec invisible simplifié) patterns.",
+            "code": "<record id=\"view_form_my_model\" model=\"ir.ui.view\">\n    <field name=\"name\">my.model.form</field>\n    <field name=\"model\">my.model</field>\n    <field name=\"arch\" type=\"xml\">\n        <form string=\"My Model\">\n            <header>\n                <button name=\"action_confirm\" type=\"object\" string=\"Confirm\" class=\"btn-primary\"/>\n            </header>\n            <sheet>\n                <group>\n                    <field name=\"name\"/>\n                    <field name=\"active\"/>\n                </group>\n            </sheet>\n        </form>\n    </field>\n</record>"
+        }
+    ],
+    "related_topics": [
+        "view_tree",
+        "inheritance"
+    ],
+    "difficulty": "beginner",
+    "breaking_changes": [
+        "v18 retains Odoo 17 API semantics while continuing to remove legacy patterns.",
+        "Prefer modern recordset methods and explicit route/auth declarations in Odoo 18."
+    ],
+    "last_updated": "2026-05-20",
+    "version": "18",
+    "context": {
+        "reference": "Code examples were moved to the snippets array for structured injection."
+    }
+}

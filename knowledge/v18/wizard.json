@@ -1,0 +1,52 @@
+{
+    "topic": "wizard",
+    "label": "Wizard (TransientModel) Odoo 18",
+    "imports": [
+        "from odoo import api, fields, models, Command",
+        "from odoo.exceptions import UserError"
+    ],
+    "rules": [
+        "MUST: hériter de models.TransientModel — PAS models.Model",
+        "MUST: utiliser Command.create() (v18+) au lieu de (0, 0, {...}) pour les one2many",
+        "MUST: default_get() pour pré-remplir le wizard depuis le contexte",
+        "MUST: self.ensure_one() dans les méthodes d'action",
+        "MUST: retourner {'type': 'ir.actions.act_window_close'} pour fermer",
+        "MUST: déclarer la sécurité (ir.model.access.csv) même pour TransientModel"
+    ],
+    "anti_patterns": [
+        "FORBIDDEN: (0, 0, {...}) pour one2many → utiliser Command.create({...}) en v18",
+        "FORBIDDEN: Hériter de models.Model pour un wizard → données persistantes",
+        "FORBIDDEN: do not omit ensure_one() → crash si multi-records",
+        "FORBIDDEN: do not omit la sécurité → AccessError pour non-admin"
+    ],
+    "trigger_keywords": [
+        "wizard",
+        "transient",
+        "TransientModel",
+        "wizard model",
+        "button"
+    ],
+    "prompt_injection_template": "Utilise ces règles et ces anti-patterns pour générer un prompt d'injection précis pour un agent codeur Odoo. Inclue uniquement les instructions techniques les plus pertinentes.\nPlace {rules}, {anti_patterns} et {snippets} dans le prompt final.",
+    "snippets": [
+        {
+            "id": "wizard_reference",
+            "title": "Exemple de référence",
+            "when_to_use": "Use this reference when implementing Wizard (TransientModel) Odoo 18 patterns.",
+            "code": "class MyWizard(models.TransientModel):\n    _name = 'my.wizard'\n\n    partner_id = fields.Many2one('res.partner', string='Partner')\n    amount = fields.Float(string='Amount')\n\n    def action_confirm(self):\n        self.ensure_one()\n        self.env['my.model'].create({\n            'partner_id': self.partner_id.id,\n            'amount': self.amount,\n        })\n\n<record id=\"view_wizard_my_model\" model=\"ir.ui.view\">\n    <field name=\"name\">my.wizard.form</field>\n    <field name=\"model\">my.wizard</field>\n    <field name=\"arch\" type=\"xml\">\n        <form string=\"Wizard\">\n            <group>\n                <field name=\"partner_id\"/>\n                <field name=\"amount\"/>\n            </group>\n            <footer>\n                <button string=\"Confirm\" type=\"object\" name=\"action_confirm\" class=\"btn-primary\"/>\n            </footer>\n        </form>\n    </field>\n</record>"
+        }
+    ],
+    "related_topics": [
+        "view_form",
+        "security"
+    ],
+    "difficulty": "intermediate",
+    "breaking_changes": [
+        "v18 retains Odoo 17 API semantics while continuing to remove legacy patterns.",
+        "Prefer modern recordset methods and explicit route/auth declarations in Odoo 18."
+    ],
+    "last_updated": "2026-05-20",
+    "version": "18",
+    "context": {
+        "reference": "Code examples were moved to the snippets array for structured injection."
+    }
+}

@@ -1,0 +1,53 @@
+{
+    "topic": "inheritance",
+    "label": "Héritage de modèle et vue Odoo 17",
+    "imports": [
+        "from odoo import api, fields, models"
+    ],
+    "rules": [
+        "MUST: use `_inherit = 'model.name'` to étend le modèle existant (même table SQL).",
+        "MUST: use `_inherits = {'model.name': 'field_id'}` to délégation (nouvelle table, lien FK).",
+        "MUST: super() sans arguments en Python 3 — pas super(ClassName, self)",
+        "MUST: inherit_id ref= pointe vers l'external id de la vue parente",
+        "MUST: xpath position: before, after, inside, replace, attributes",
+        "MUST: nommer la vue héritée: nom_original.inherit.nom_module"
+    ],
+    "anti_patterns": [
+        "FORBIDDEN: _inherit sans _name → extension. _inherit + _name différent → prototype (copie)",
+        "FORBIDDEN: Super(ClassName, self) → syntaxe Python 2, utiliser super()",
+        "FORBIDDEN: do not omit inherit_id dans la vue XML → crée une nouvelle vue au lieu d'étendre",
+        "FORBIDDEN: Xpath trop spécifique → casse si la vue parente change"
+    ],
+    "trigger_keywords": [
+        "inheritance",
+        "inherit",
+        "_inherit",
+        "_inherits",
+        "mixin",
+        "model inheritance"
+    ],
+    "prompt_injection_template": "Utilise ces règles et ces anti-patterns pour générer un prompt d'injection précis pour un agent codeur Odoo. Inclue uniquement les instructions techniques les plus pertinentes.\nPlace {rules}, {anti_patterns} et {snippets} dans le prompt final.",
+    "snippets": [
+        {
+            "id": "inheritance_reference",
+            "title": "Exemple de référence",
+            "when_to_use": "Use this reference when implementing Héritage de modèle et vue Odoo 17 patterns.",
+            "code": "class MyModel(models.Model):\n    _inherit = 'res.partner'\n    additional_note = fields.Text()\n\nclass MyInheritedModel(models.Model):\n    _name = 'inherited.model'\n    _inherits = {'res.partner': 'partner_id'}\n    partner_id = fields.Many2one('res.partner', required=True, ondelete='cascade')\n    extra_field = fields.Char()"
+        }
+    ],
+    "related_topics": [
+        "compute_field",
+        "view_form",
+        "migration"
+    ],
+    "difficulty": "intermediate",
+    "breaking_changes": [
+        "v17 is the base target for this topic with stable Odoo 17 APIs.",
+        "Avoid legacy patterns older than Odoo 17 such as api.one and manual transaction commits."
+    ],
+    "last_updated": "2026-05-20",
+    "version": "17",
+    "context": {
+        "reference": "Code examples were moved to the snippets array for structured injection."
+    }
+}

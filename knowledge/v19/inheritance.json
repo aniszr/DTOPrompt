@@ -1,0 +1,62 @@
+{
+    "topic": "inheritance",
+    "label": "Héritage Odoo 19 (_inherit & _inherits)",
+    "imports": [
+        "from odoo import api, fields, models"
+    ],
+    "rules": [
+        "MUST: l'héritage classique (_inherit) modifie le modèle en place, sans créer de nouvelle table",
+        "MUST: l'héritage par délégation (_inherits) lie un modèle parent via un champ Many2one, fusionnant les champs dans l'interface",
+        "MUST: en XML, les attributs dynamiques (invisible, readonly) s'écrivent avec l'évaluation Python directe depuis Odoo 17+",
+        "FORBIDDEN: Éviter xpath position=\"replace\", préférer invisibiliser le champ",
+        "MUST: préciser toujours l'inherit_id avec module.xml_id dans les vues",
+        "MUST: lors de l'héritage de fonctions Python, utiliser super() pour appeler la méthode d'origine"
+    ],
+    "anti_patterns": [
+        "FORBIDDEN: Attrs={'invisible': [('is_company','=',False)]} — l'attribut attrs n'existe plus en Odoo 17+",
+        "FORBIDDEN: Remplacer des blocs entiers de vue avec xpath expr='//sheet' position='replace'",
+        "FORBIDDEN: do not omit ondelete='cascade' sur le Many2one dans un héritage _inherits",
+        "FORBIDDEN: do not omit de retourner le résultat de super() dans une méthode héritée"
+    ],
+    "trigger_keywords": [
+        "inheritance",
+        "inherit",
+        "_inherit",
+        "_inherits",
+        "mixin",
+        "model inheritance"
+    ],
+    "prompt_injection_template": "Utilise ces règles et ces anti-patterns pour générer un prompt d'injection précis pour un agent codeur Odoo. Inclue uniquement les instructions techniques les plus pertinentes.\nPlace {rules}, {anti_patterns} et {snippets} dans le prompt final.",
+    "snippets": [
+        {
+            "id": "inheritance_reference",
+            "title": "Exemple de référence",
+            "when_to_use": "Use this reference when implementing Héritage Odoo 19 (_inherit & _inherits) patterns.",
+            "code": "class MyModel(models.Model):\n    _inherit = 'res.partner'\n    additional_note = fields.Text()\n\nclass MyInheritedModel(models.Model):\n    _name = 'inherited.model'\n    _inherits = {'res.partner': 'partner_id'}\n    partner_id = fields.Many2one('res.partner', required=True, ondelete='cascade')\n    extra_field = fields.Char()"
+        }
+    ],
+    "advanced": {
+        "delegation": {
+            "trigger_keywords": [
+                "délégation",
+                "inherits",
+                "héritage par délégation"
+            ],
+            "snippet": "_inherits = {'res.partner': 'partner_id'}",
+            "warning": "La délégation implique que chaque enregistrement créé créera aussi un enregistrement du modèle parent."
+        }
+    },
+    "related_topics": [
+        "view_form"
+    ],
+    "difficulty": "beginner",
+    "breaking_changes": [
+        "v19 requires Python 3.12-compatible syntax and stronger modern ORM practices.",
+        "Avoid legacy internal APIs, manual request.CR commits, and deprecated controller patterns in Odoo 19."
+    ],
+    "last_updated": "2026-05-20",
+    "version": "19",
+    "context": {
+        "reference": "Code examples were moved to the snippets array for structured injection."
+    }
+}

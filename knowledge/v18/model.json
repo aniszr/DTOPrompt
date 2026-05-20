@@ -1,0 +1,66 @@
+{
+    "topic": "model",
+    "label": "Création de Modèle Odoo",
+    "imports": [
+        "from odoo import models, fields, api"
+    ],
+    "rules": [
+        "MUST: toujours définir _name et _description.",
+        "MUST: utiliser les types de champs standards (Char, Boolean, Selection, Many2one, One2many, Many2many).",
+        "MUST: pour les champs relationnels, toujours spécifier comodel_name, string et ondelete.",
+        "MUST: définir _order si un tri par défaut est nécessaire.",
+        "MUST: utiliser copy=False pour les champs non souhaités en duplication.",
+        "MUST: choisir _inherit ou _inherits selon le besoin métier.",
+        "MUST: odoo 19: attention aux changements de l'API d'environnement et aux règles de transaction."
+    ],
+    "anti_patterns": [
+        "FORBIDDEN: do not omit _description (provoque un warning dans les logs).",
+        "FORBIDDEN: do not use des mots réservés SQL comme noms de champs (ex: 'order', 'select').",
+        "FORBIDDEN: Définir required=True sur un champ compute sans store=True.",
+        "FORBIDDEN: do not omit ondelete sur les relations Many2one et One2many."
+    ],
+    "trigger_keywords": [
+        "model",
+        "models.Model",
+        "field",
+        "_name",
+        "_description",
+        "fields.Char",
+        "fields.Many2one"
+    ],
+    "prompt_injection_template": "Utilise ces règles et ces anti-patterns pour générer un prompt d'injection précis pour un agent codeur Odoo. Inclue uniquement les instructions techniques les plus pertinentes.\nPlace {rules}, {anti_patterns} et {snippets} dans le prompt final.",
+    "snippets": [
+        {
+            "id": "model_reference",
+            "title": "Exemple de référence",
+            "when_to_use": "Use this reference when implementing Création de Modèle Odoo patterns.",
+            "code": "class Patient(models.Model):\n    _name = 'health.patient'\n    _description = 'Patient'\n    _order = 'name asc'\n\n    name = fields.Char(string='Nom', required=True)\n    active = fields.Boolean(default=True)\n    doctor_id = fields.Many2one('res.users', string='Médecin', ondelete='set null')\n    age = fields.Integer(string='Âge')\n    notes = fields.Text(string='Notes')"
+        }
+    ],
+    "advanced": {
+        "abstract": {
+            "trigger_keywords": [
+                "abstrait",
+                "mixin",
+                "template"
+            ],
+            "snippet": "class CustomMixin(models.AbstractModel):",
+            "warning": "Les modèles abstraits ne créent pas de table en base de données."
+        }
+    },
+    "related_topics": [
+        "compute_field",
+        "constraint",
+        "onchange"
+    ],
+    "difficulty": "beginner",
+    "breaking_changes": [
+        "v18 retains Odoo 17 API semantics while continuing to remove legacy patterns.",
+        "Prefer modern recordset methods and explicit route/auth declarations in Odoo 18."
+    ],
+    "last_updated": "2026-05-20",
+    "version": "18",
+    "context": {
+        "reference": "Code examples were moved to the snippets array for structured injection."
+    }
+}

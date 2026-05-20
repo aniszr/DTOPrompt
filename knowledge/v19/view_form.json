@@ -1,0 +1,46 @@
+{
+    "topic": "view_form",
+    "label": "Vue formulaire Odoo 19 (syntaxe attributs directe)",
+    "imports": [],
+    "rules": [
+        "MUST: en v19, utiliser invisible, readonly et required directement (attrs est supprimé)",
+        "MUST: class=\"btn-primary\" remplace class=\"oe_highlight\"",
+        "MUST: utiliser la balise <chatter/> raccourcie en v19",
+        "MUST: pas besoin de l'attribut string sur la balise form si le titre (oe_title) est clair"
+    ],
+    "anti_patterns": [
+        "FORBIDDEN: Attrs={'invisible': [...]} → SUPPRIMÉ en v19, erreur XML garantie",
+        "FORBIDDEN: Class=\"oe_highlight\" → déprécié, utiliser btn-primary",
+        "FORBIDDEN: Chatter verbeux (<field name=\"message_ids\"/>) → utiliser <chatter/>"
+    ],
+    "trigger_keywords": [
+        "form",
+        "view_form",
+        "form view",
+        "record form",
+        "field view"
+    ],
+    "prompt_injection_template": "Utilise ces règles et ces anti-patterns pour générer un prompt d'injection précis pour un agent codeur Odoo. Inclue uniquement les instructions techniques les plus pertinentes.\nPlace {rules}, {anti_patterns} et {snippets} dans le prompt final.",
+    "snippets": [
+        {
+            "id": "view_form_reference",
+            "title": "Exemple de référence",
+            "when_to_use": "Use this reference when implementing Vue formulaire Odoo 19 (syntaxe attributs directe) patterns.",
+            "code": "<record id=\"view_form_my_model\" model=\"ir.ui.view\">\n    <field name=\"name\">my.model.form</field>\n    <field name=\"model\">my.model</field>\n    <field name=\"arch\" type=\"xml\">\n        <form string=\"My Model\">\n            <header>\n                <button name=\"action_confirm\" type=\"object\" string=\"Confirm\" class=\"btn-primary\"/>\n            </header>\n            <sheet>\n                <group>\n                    <field name=\"name\"/>\n                    <field name=\"active\"/>\n                </group>\n            </sheet>\n        </form>\n    </field>\n</record>"
+        }
+    ],
+    "related_topics": [
+        "view_tree",
+        "inheritance"
+    ],
+    "difficulty": "beginner",
+    "breaking_changes": [
+        "v19 requires Python 3.12-compatible syntax and stronger modern ORM practices.",
+        "Avoid legacy internal APIs, manual request.CR commits, and deprecated controller patterns in Odoo 19."
+    ],
+    "last_updated": "2026-05-20",
+    "version": "19",
+    "context": {
+        "reference": "Code examples were moved to the snippets array for structured injection."
+    }
+}

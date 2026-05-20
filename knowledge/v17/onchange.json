@@ -1,0 +1,50 @@
+{
+    "topic": "onchange",
+    "label": "Onchange Odoo 17",
+    "imports": [
+        "from odoo import api, fields, models"
+    ],
+    "rules": [
+        "MUST: @api.onchange ne modifie PAS la base — uniquement la vue côté client",
+        "MUST: self est un pseudo-record (NewId) — pas de self.env.cr.commit()",
+        "MUST: pas de write() ni create() dans un onchange",
+        "MUST: retourner un dict {'warning': {...}} pour afficher un avertissement",
+        "MUST: préfixer le nom de méthode par _onchange_"
+    ],
+    "anti_patterns": [
+        "FORBIDDEN: Self.write({...}) dans un onchange → crash ou comportement imprévisible",
+        "FORBIDDEN: Self.env.cr.commit() dans un onchange → dangereux",
+        "FORBIDDEN: Confondre @api.onchange et compute — onchange = UI only, compute = serveur",
+        "FORBIDDEN: @api.onchange sur un champ related → inutile, le related se met à jour seul"
+    ],
+    "trigger_keywords": [
+        "onchange",
+        "@api.onchange",
+        "change event",
+        "onchange",
+        "compute"
+    ],
+    "prompt_injection_template": "Utilise ces règles et ces anti-patterns pour générer un prompt d'injection précis pour un agent codeur Odoo. Inclue uniquement les instructions techniques les plus pertinentes.\nPlace {rules}, {anti_patterns} et {snippets} dans le prompt final.",
+    "snippets": [
+        {
+            "id": "onchange_reference",
+            "title": "Exemple de référence",
+            "when_to_use": "Use this reference when implementing Onchange Odoo 17 patterns.",
+            "code": "class MyModel(models.Model):\n    _name = 'my.model'\n\n    state = fields.Selection([('draft', 'Draft'), ('done', 'Done')], default='draft')\n    amount = fields.Float()\n\n    @api.onchange('amount')\n    def _onchange_amount(self):\n        if self.amount < 0:\n            self.amount = 0\n            return {'warning': {'title': 'Valeur invalide', 'message': 'Le montant ne peut pas être négatif.'}}"
+        }
+    ],
+    "related_topics": [
+        "compute_field",
+        "view_form"
+    ],
+    "difficulty": "beginner",
+    "breaking_changes": [
+        "v17 is the base target for this topic with stable Odoo 17 APIs.",
+        "Avoid legacy patterns older than Odoo 17 such as api.one and manual transaction commits."
+    ],
+    "last_updated": "2026-05-20",
+    "version": "17",
+    "context": {
+        "reference": "Code examples were moved to the snippets array for structured injection."
+    }
+}

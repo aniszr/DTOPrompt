@@ -1,0 +1,46 @@
+{
+    "topic": "owl",
+    "label": "Composants OWL",
+    "imports": [
+        "import { Component, useState } from \"@odoo/owl\";",
+        "import { registry } from \"@web/core/registry\";"
+    ],
+    "rules": [
+        "MUST: toujours hériter de `Component` provenant de `@odoo/owl`.",
+        "MUST: utiliser `useState` pour les données réactives.",
+        "MUST: enregistrer le composant dans la bonne catégorie du registre (actions, fields, views...).",
+        "MUST: odoo 17 utilise OWL 2. Assurez-vous d'utiliser la syntaxe moderne."
+    ],
+    "anti_patterns": [
+        "FORBIDDEN: Manipuler directement le DOM avec `document.getElementById`.",
+        "FORBIDDEN: do not omit de définir le `static template` ou de l'ajouter dans les assets."
+    ],
+    "trigger_keywords": [
+        "owl",
+        "javascript",
+        "component",
+        "renderer",
+        "web client",
+        "owl component"
+    ],
+    "prompt_injection_template": "Utilise ces règles et ces anti-patterns pour générer un prompt d'injection précis pour un agent codeur Odoo. Inclue uniquement les instructions techniques les plus pertinentes.\nPlace {rules}, {anti_patterns} et {snippets} dans le prompt final.",
+    "snippets": [
+        {
+            "id": "owl_reference",
+            "title": "Exemple de référence",
+            "when_to_use": "Use this reference when implementing Composants OWL patterns.",
+            "code": "class MyComponent(Component):\n    setup() {\n        this.state = useState({count: 0})\n    }\n\n    increment() {\n        this.state.count += 1\n    }\n\n    static template = xml`<div>\n        <button t-on-click=\"this.increment\">Increment</button>\n        <span><t t-esc=\"this.state.count\"/></span>\n    </div>`"
+        }
+    ],
+    "related_topics": [],
+    "difficulty": "advanced",
+    "breaking_changes": [
+        "v17 is the base target for this topic with stable Odoo 17 APIs.",
+        "Avoid legacy patterns older than Odoo 17 such as api.one and manual transaction commits."
+    ],
+    "last_updated": "2026-05-20",
+    "version": "17",
+    "context": {
+        "reference": "Code examples were moved to the snippets array for structured injection."
+    }
+}

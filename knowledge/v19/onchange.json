@@ -1,0 +1,47 @@
+{
+    "topic": "onchange",
+    "label": "Onchange (Déprécié) et Precompute Odoo 19",
+    "imports": [
+        "from odoo import api, fields, models"
+    ],
+    "rules": [
+        "MUST: @api.onchange est DÉPRÉCIÉ en v19",
+        "MUST: utiliser compute + readonly=False + store=True + precompute=True",
+        "MUST: precompute=True permet de calculer la valeur en temps réel dans le frontend avant sauvegarde",
+        "MUST: readonly=False permet à l'utilisateur d'écraser la valeur calculée"
+    ],
+    "anti_patterns": [
+        "FORBIDDEN: do not use @api.onchange pour définir des valeurs → obsolète, utiliser compute",
+        "FORBIDDEN: @api.onchange retournant des domaines dynamiques → gérer via vue (domain=\"[...]\")",
+        "FORBIDDEN: Self.write() dans un onchange → crash"
+    ],
+    "trigger_keywords": [
+        "onchange",
+        "@api.onchange",
+        "change event",
+        "onchange",
+        "compute"
+    ],
+    "prompt_injection_template": "Utilise ces règles et ces anti-patterns pour générer un prompt d'injection précis pour un agent codeur Odoo. Inclue uniquement les instructions techniques les plus pertinentes.\nPlace {rules}, {anti_patterns} et {snippets} dans le prompt final.",
+    "snippets": [
+        {
+            "id": "onchange_reference",
+            "title": "Exemple de référence",
+            "when_to_use": "Use this reference when implementing Onchange (Déprécié) et Precompute Odoo 19 patterns.",
+            "code": "class MyModel(models.Model):\n    _name = 'my.model'\n\n    state = fields.Selection([('draft', 'Draft'), ('done', 'Done')], default='draft')\n    amount = fields.Float()\n\n    @api.onchange('amount')\n    def _onchange_amount(self):\n        if self.amount < 0:\n            self.amount = 0\n            return {'warning': {'title': 'Valeur invalide', 'message': 'Le montant ne peut pas être négatif.'}}"
+        }
+    ],
+    "related_topics": [
+        "compute_field"
+    ],
+    "difficulty": "intermediate",
+    "breaking_changes": [
+        "v19 requires Python 3.12-compatible syntax and stronger modern ORM practices.",
+        "Avoid legacy internal APIs, manual request.CR commits, and deprecated controller patterns in Odoo 19."
+    ],
+    "last_updated": "2026-05-20",
+    "version": "19",
+    "context": {
+        "reference": "Code examples were moved to the snippets array for structured injection."
+    }
+}

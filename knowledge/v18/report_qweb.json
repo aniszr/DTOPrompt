@@ -1,0 +1,51 @@
+{
+    "topic": "report_qweb",
+    "label": "Rapport QWeb PDF Odoo 18",
+    "imports": [],
+    "rules": [
+        "MUST: en v18 utiliser t-out au lieu de t-esc (t-esc est déprécié)",
+        "MUST: wrapper HTML obligatoire",
+        "MUST: en-tête/pied de page société",
+        "MUST: docs = recordset passé automatiquement au template",
+        "MUST: report_name doit correspondre exactement à l'id du template",
+        "MUST: ajoute le rapport au menu Imprimer"
+    ],
+    "anti_patterns": [
+        "FORBIDDEN: T-esc → déprécié en v18, utiliser t-out",
+        "FORBIDDEN: do not omit web.html_container → PDF mal formaté",
+        "FORBIDDEN: T-raw avec données utilisateur → faille XSS",
+        "FORBIDDEN: Report_name != template id → rapport introuvable"
+    ],
+    "trigger_keywords": [
+        "report",
+        "qweb",
+        "template",
+        "report_qweb",
+        "qweb",
+        "t-esc",
+        "t-raw"
+    ],
+    "prompt_injection_template": "Utilise ces règles et ces anti-patterns pour générer un prompt d'injection précis pour un agent codeur Odoo. Inclue uniquement les instructions techniques les plus pertinentes.\nPlace {rules}, {anti_patterns} et {snippets} dans le prompt final.",
+    "snippets": [
+        {
+            "id": "report_qweb_reference",
+            "title": "Exemple de référence",
+            "when_to_use": "Use this reference when implementing Rapport QWeb PDF Odoo 18 patterns.",
+            "code": "<template id=\"report_my_model\">\n    <t t-call=\"web.html_container\">\n        <t t-foreach=\"docs\" t-as=\"doc\">\n            <div class=\"page\">\n                <h2><t t-esc=\"doc.name\"/></h2>\n                <p><t t-esc=\"doc.description\"/></p>\n            </div>\n        </t>\n    </t>\n</template>"
+        }
+    ],
+    "related_topics": [
+        "view_form",
+        "controller"
+    ],
+    "difficulty": "intermediate",
+    "breaking_changes": [
+        "v18 retains Odoo 17 API semantics while continuing to remove legacy patterns.",
+        "Prefer modern recordset methods and explicit route/auth declarations in Odoo 18."
+    ],
+    "last_updated": "2026-05-20",
+    "version": "18",
+    "context": {
+        "reference": "Code examples were moved to the snippets array for structured injection."
+    }
+}

@@ -1,0 +1,48 @@
+{
+    "topic": "view_tree",
+    "label": "Vue liste/tree Odoo 18",
+    "imports": [],
+    "rules": [
+        "MUST: multi_edit='1' permet l'édition en masse depuis la vue liste",
+        "MUST: optional='show'|'hide' pour les colonnes optionnelles (v18+)",
+        "MUST: decoration-bf='1' pour mettre un champ en gras",
+        "MUST: decoration-danger/success/info pour coloriser les lignes",
+        "MUST: sum='Label' sur un champ numérique pour le total en pied de liste",
+        "MUST: widget='badge' pour afficher le state comme badge coloré"
+    ],
+    "anti_patterns": [
+        "FORBIDDEN: Colors='...' → obsolète depuis v12, utiliser decoration-*",
+        "FORBIDDEN: Attrs={'column_invisible': ...} → déprécié v18, utiliser column_invisible=",
+        "FORBIDDEN: do not omit l'action window → la vue existe mais n'est pas accessible"
+    ],
+    "trigger_keywords": [
+        "tree",
+        "list",
+        "view_tree",
+        "tree view",
+        "list view"
+    ],
+    "prompt_injection_template": "Utilise ces règles et ces anti-patterns pour générer un prompt d'injection précis pour un agent codeur Odoo. Inclue uniquement les instructions techniques les plus pertinentes.\nPlace {rules}, {anti_patterns} et {snippets} dans le prompt final.",
+    "snippets": [
+        {
+            "id": "view_tree_reference",
+            "title": "Exemple de référence",
+            "when_to_use": "Use this reference when implementing Vue liste/tree Odoo 18 patterns.",
+            "code": "<record id=\"view_tree_my_model\" model=\"ir.ui.view\">\n    <field name=\"name\">my.model.tree</field>\n    <field name=\"model\">my.model</field>\n    <field name=\"arch\" type=\"xml\">\n        <tree>\n            <field name=\"name\"/>\n            <field name=\"state\"/>\n            <field name=\"date\"/>\n        </tree>\n    </field>\n</record>"
+        }
+    ],
+    "related_topics": [
+        "view_form",
+        "view_kanban"
+    ],
+    "difficulty": "beginner",
+    "breaking_changes": [
+        "v18 retains Odoo 17 API semantics while continuing to remove legacy patterns.",
+        "Prefer modern recordset methods and explicit route/auth declarations in Odoo 18."
+    ],
+    "last_updated": "2026-05-20",
+    "version": "18",
+    "context": {
+        "reference": "Code examples were moved to the snippets array for structured injection."
+    }
+}

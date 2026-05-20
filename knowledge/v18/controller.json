@@ -1,0 +1,54 @@
+{
+    "topic": "controller",
+    "label": "Contrôleur HTTP Odoo 18",
+    "imports": [
+        "from odoo import http",
+        "from odoo.http import request, route"
+    ],
+    "rules": [
+        "MUST: use `type='json'` for JSON routes and return structured JSON.",
+        "MUST: use `type='http'` for HTML routes and accept form/query params.",
+        "MUST: declare `auth` explicitly on @http.route definitions.",
+        "MUST: csrf=False uniquement pour les endpoints API appelés par des tiers",
+        "MUST: request.not_found() pour retourner un 404 propre",
+        "MUST: utiliser <int:param> pour typer les paramètres de route"
+    ],
+    "anti_patterns": [
+        "FORBIDDEN: Json.dumps() dans un type='json' → double encodage",
+        "FORBIDDEN: Csrf=False systématique → faille de sécurité",
+        "FORBIDDEN: Request.cr.commit() → Odoo gère les transactions",
+        "FORBIDDEN: do not omit .exists() avant d'utiliser browse() → erreur silencieuse"
+    ],
+    "trigger_keywords": [
+        "controller",
+        "@http.route",
+        "route",
+        "request",
+        "http",
+        "type=json",
+        "type=http"
+    ],
+    "prompt_injection_template": "Utilise ces règles et ces anti-patterns pour générer un prompt d'injection précis pour un agent codeur Odoo. Inclue uniquement les instructions techniques les plus pertinentes.\nPlace {rules}, {anti_patterns} et {snippets} dans le prompt final.",
+    "snippets": [
+        {
+            "id": "controller_reference",
+            "title": "Exemple de référence",
+            "when_to_use": "Use this reference when implementing Contrôleur HTTP Odoo 18 patterns.",
+            "code": "class MyController(http.Controller):\n\n    @http.route('/my_module/api/data', type='json', auth='user', methods=['POST'])\n    def api_data(self, **post):\n        records = request.env['my.model'].search([('active', '=', True)])\n        return {'count': len(records), 'records': records.read(['name'])}\n\n    @http.route('/my_module/page', type='http', auth='public', website=True)\n    def page(self, **kwargs):\n        return request.render('my_module.my_template', {'records': request.env['my.model'].search([])})"
+        }
+    ],
+    "related_topics": [
+        "security",
+        "report_qweb"
+    ],
+    "difficulty": "intermediate",
+    "breaking_changes": [
+        "v18 retains Odoo 17 API semantics while continuing to remove legacy patterns.",
+        "Prefer modern recordset methods and explicit route/auth declarations in Odoo 18."
+    ],
+    "last_updated": "2026-05-20",
+    "version": "18",
+    "context": {
+        "reference": "Code examples were moved to the snippets array for structured injection."
+    }
+}
