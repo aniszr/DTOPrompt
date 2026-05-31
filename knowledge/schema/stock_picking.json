@@ -1,0 +1,30 @@
+{
+  "model": "stock.picking",
+  "label": "Transfert de stock (livraison / réception / interne)",
+  "key_fields": {
+    "name": "Char (sequence, readonly)",
+    "partner_id": "Many2one('res.partner') — partenaire",
+    "picking_type_id": "Many2one('stock.picking.type', required=True) — type d'opération",
+    "picking_type_code": "Selection(['incoming','outgoing','internal']) — related de picking_type_id.code",
+    "state": "Selection(['draft','waiting','confirmed','assigned','done','cancel'])",
+    "scheduled_date": "Datetime — date prévue",
+    "date_done": "Datetime — date de validation effective",
+    "move_ids": "One2many('stock.move', 'picking_id') — mouvements de stock",
+    "move_line_ids": "One2many('stock.move.line', 'picking_id') — détail avec lots/séries",
+    "location_id": "Many2one('stock.location', required=True) — emplacement source",
+    "location_dest_id": "Many2one('stock.location', required=True) — emplacement destination",
+    "origin": "Char — document d'origine (ex: SO001)",
+    "note": "Html — instructions"
+  },
+  "common_methods": [
+    "button_validate() — valider le transfert (déclenche _action_done)",
+    "action_assign() — vérifier disponibilité et réserver le stock",
+    "do_unreserve() — annuler la réservation",
+    "action_cancel() — annuler le transfert"
+  ],
+  "version_notes": {
+    "17": "Utiliser move_ids pour itérer sur les mouvements et move_line_ids pour accéder aux numéros de série/lot. Le champ immediate_transfer a été supprimé.",
+    "18": "Nouveau mode de validation immédiate. La saisie des quantités faites se fait directement sur move_line_ids.",
+    "19": "Vérifier les changements du module stock pour le nouveau système de traçabilité et les règles de réapprovisionnement."
+  }
+}

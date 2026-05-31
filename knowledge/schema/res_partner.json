@@ -1,0 +1,39 @@
+{
+  "model": "res.partner",
+  "label": "Partenaire (client / fournisseur / contact)",
+  "key_fields": {
+    "name": "Char (required) — nom ou raison sociale",
+    "is_company": "Boolean — True si personne morale",
+    "parent_id": "Many2one('res.partner', ondelete='cascade') — société parente",
+    "child_ids": "One2many('res.partner', 'parent_id') — contacts de la société",
+    "email": "Char",
+    "phone": "Char",
+    "mobile": "Char",
+    "street": "Char",
+    "city": "Char",
+    "zip": "Char",
+    "country_id": "Many2one('res.country')",
+    "state_id": "Many2one('res.country.state')",
+    "vat": "Char — numéro TVA",
+    "customer_rank": "Integer — 0 si pas client, >0 si client (remplace l'ancien champ customer)",
+    "supplier_rank": "Integer — 0 si pas fournisseur, >0 si fournisseur (remplace supplier)",
+    "user_id": "Many2one('res.users') — commercial responsable",
+    "category_id": "Many2many('res.partner.category') — tags",
+    "lang": "Selection — langue du partenaire",
+    "property_account_receivable_id": "Many2one('account.account') — compte client",
+    "property_account_payable_id": "Many2one('account.account') — compte fournisseur",
+    "property_payment_term_id": "Many2one('account.payment.term') — conditions de paiement client",
+    "property_supplier_payment_term_id": "Many2one('account.payment.term') — conditions de paiement fournisseur",
+    "active": "Boolean"
+  },
+  "common_methods": [
+    "_get_name() — nom complet avec société parente",
+    "action_view_sale_order() — voir les commandes client",
+    "write() — mettre à jour ; déclenche la propagation vers child_ids si adresse modifiée"
+  ],
+  "version_notes": {
+    "17": "customer_rank / supplier_rank remplacent les champs booléens customer et supplier supprimés en v14. Utiliser customer_rank >= 1 pour filtrer les clients.",
+    "18": "Pas de changement majeur sur res.partner en v18.",
+    "19": "Vérifier les changements liés au nouveau système d'environnement pour les méthodes qui utilisent self.env."
+  }
+}

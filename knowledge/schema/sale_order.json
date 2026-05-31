@@ -1,0 +1,43 @@
+{
+  "model": "sale.order",
+  "label": "Bon de commande client",
+  "key_fields": {
+    "partner_id": "Many2one('res.partner', required=True, ondelete='restrict') — client",
+    "order_line": "One2many('sale.order.line', 'order_id') — lignes de commande",
+    "state": "Selection(['draft','sent','sale','done','cancel']) — statut",
+    "date_order": "Datetime — date de confirmation",
+    "amount_untaxed": "Monetary (compute, store=True) — total HT",
+    "amount_total": "Monetary (compute, store=True) — total TTC",
+    "currency_id": "Many2one('res.currency')",
+    "pricelist_id": "Many2one('product.pricelist') — liste de prix",
+    "user_id": "Many2one('res.users') — commercial",
+    "team_id": "Many2one('crm.team') — équipe commerciale",
+    "invoice_ids": "Many2many('account.move') — factures générées",
+    "invoice_status": "Selection(['upselling','invoiced','to invoice','nothing'])",
+    "picking_ids": "One2many('stock.picking') — livraisons",
+    "commitment_date": "Datetime — date de livraison promise",
+    "note": "Html — conditions générales"
+  },
+  "order_line_fields": {
+    "order_id": "Many2one('sale.order', ondelete='cascade')",
+    "product_id": "Many2one('product.product', required=True)",
+    "product_uom_qty": "Float — quantité commandée",
+    "qty_delivered": "Float (compute) — quantité livrée",
+    "qty_invoiced": "Float (compute) — quantité facturée",
+    "price_unit": "Float — prix unitaire",
+    "discount": "Float — remise %",
+    "tax_id": "Many2many('account.tax')",
+    "price_subtotal": "Monetary (compute, store=True)"
+  },
+  "common_methods": [
+    "action_confirm() — confirmer la commande",
+    "_create_invoices() — créer les factures (v17+)",
+    "action_cancel() — annuler",
+    "_action_launch_stock_rule() — déclencher les règles de stock"
+  ],
+  "version_notes": {
+    "17": "Utiliser _create_invoices() pour créer les factures. La méthode action_invoice_create() est supprimée depuis v13.",
+    "18": "Nouveau champ lock_status. _create_invoices() accepte final=True pour clôturer définitivement.",
+    "19": "Refactorisation du workflow de facturation. Vérifier les breaking changes sur l'environnement."
+  }
+}

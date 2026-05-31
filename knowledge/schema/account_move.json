@@ -1,0 +1,46 @@
+{
+  "model": "account.move",
+  "label": "Facture / Pièce comptable",
+  "key_fields": {
+    "move_type": "Selection(['entry','out_invoice','out_refund','in_invoice','in_refund','out_receipt','in_receipt']) — type de pièce",
+    "partner_id": "Many2one('res.partner') — client ou fournisseur",
+    "journal_id": "Many2one('account.journal', required=True)",
+    "invoice_date": "Date — date de facturation",
+    "invoice_date_due": "Date — date d'échéance",
+    "invoice_line_ids": "One2many('account.move.line', 'move_id') — lignes de facture (vue filtrée, sans les lignes de taxes/contrepartie)",
+    "line_ids": "One2many('account.move.line', 'move_id') — toutes les écritures comptables",
+    "state": "Selection(['draft','posted','cancel'])",
+    "payment_state": "Selection(['not_paid','in_payment','paid','partial','reversed','invoicing_legacy'])",
+    "amount_untaxed": "Monetary (compute)",
+    "amount_tax": "Monetary (compute)",
+    "amount_total": "Monetary (compute)",
+    "amount_residual": "Monetary (compute) — montant restant dû",
+    "currency_id": "Many2one('res.currency')",
+    "invoice_origin": "Char — document source (ex: SO001)",
+    "ref": "Char — référence / numéro bon de commande client"
+  },
+  "move_line_fields": {
+    "move_id": "Many2one('account.move', ondelete='cascade')",
+    "account_id": "Many2one('account.account', required=True)",
+    "product_id": "Many2one('product.product')",
+    "name": "Char — libellé de la ligne",
+    "quantity": "Float",
+    "price_unit": "Float",
+    "tax_ids": "Many2many('account.tax')",
+    "debit": "Monetary (compute)",
+    "credit": "Monetary (compute)",
+    "balance": "Monetary (compute)"
+  },
+  "common_methods": [
+    "action_post() — valider la pièce (passer en posted)",
+    "button_draft() — remettre en brouillon",
+    "button_cancel() — annuler",
+    "_reverse_moves() — créer un avoir",
+    "action_register_payment() — enregistrer un paiement"
+  ],
+  "version_notes": {
+    "17": "Toujours utiliser invoice_line_ids pour les lignes visibles de facture et line_ids pour toutes les écritures. move_type remplace le champ type depuis v13.",
+    "18": "Nouveau workflow de validation avec approbation optionnelle. Champ payment_state enrichi avec de nouveaux états.",
+    "19": "Refactorisation du moteur comptable. Attention aux changements d'environnement pour les hooks pre/post-processing."
+  }
+}

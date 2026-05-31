@@ -6,9 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
-import anthropic
-import openai
-from google import genai
+from llm_client import call_llm
 from prompt_compiler import compile_prompt
 
 CONFIG_PATH = Path(__file__).parent / "ai_config.json"
@@ -88,15 +86,9 @@ def compile_endpoint(request: CompileRequest):
         "is_fallback": result["is_fallback"]
     }
 
-@app.post("/refine-prompt")
-def refine_prompt(request: RefineRequest):
-    api_key = request.api_key
-    if not api_key:
-        raise HTTPException(status_code=401, detail="Clé API manquante.")
-
-    system_prompt = """Tu es un META-PROMPT ENGINEER spécialisé sur Odoo.
+_REFINE_SYSTEM_PROMPT = """Tu es un META-PROMPT ENGINEER spécialisé sur Odoo.
 Ton UNIQUE but est de formuler le prompt idéal qu'un développeur donnera à une IA génératrice de code (Cursor, Copilot, ChatGPT, etc.).
-TU N'ES PAS LE DÉVELOPPEUR ODOO. TU NE DOIS GÉNÉRER AUCUN CODE FONCTIONNEL POUR RÉPONDRE À LA DEMANDE UTILISATEUR. 
+TU N'ES PAS LE DÉVELOPPEUR ODOO. TU NE DOIS GÉNÉRER AUCUN CODE FONCTIONNEL POUR RÉPONDRE À LA DEMANDE UTILISATEUR.
 
 Tu vas recevoir :
 1. L'input du développeur (ce qu'il veut créer).
@@ -125,87 +117,31 @@ Inspire-toi strictement de ces exemples (Pattern de référence) :
 Génère UNIQUEMENT le code (Python/XML), sans blabla, sans explications.
 ---
 
-RÈGLE D'OR : NE CODE SURTOUT PAS LA SOLUTION. 
-Si l'utilisateur demande "Crée un modèle patient", tu NE DOIS PAS écrire `class Patient(models.Model):`. 
+RÈGLE D'OR : NE CODE SURTOUT PAS LA SOLUTION.
+Si l'utilisateur demande "Crée un modèle patient", tu NE DOIS PAS écrire `class Patient(models.Model):`.
 Tu dois écrire un texte du genre : "Crée un modèle patient en respectant les règles suivantes...".
 Réponds UNIQUEMENT avec le prompt optimisé, sans aucune phrase d'introduction."""
 
+
+@app.post("/refine-prompt")
+def refine_prompt(request: RefineRequest):
+    api_key = request.api_key
+    if not api_key:
+        raise HTTPException(status_code=401, detail="Clé API manquante.")
+
     user_content = f"Input développeur : {request.user_input}\n\nContexte brut compilé :\n{request.compiled_prompt}"
 
-    def extract_token_count(response_obj):
-        if response_obj is None:
-            return None
-        if hasattr(response_obj, "to_dict"):
-            try:
-                response_obj = response_obj.to_dict()
-            except Exception:
-                pass
-        if isinstance(response_obj, dict):
-            usage = response_obj.get("usage")
-            if isinstance(usage, dict):
-                return usage.get("total_tokens") or usage.get("token_count")
-            if hasattr(usage, "get"):
-                return usage.get("total_tokens") or usage.get("token_count")
-        if hasattr(response_obj, "usage"):
-            usage = response_obj.usage
-            if isinstance(usage, dict):
-                return usage.get("total_tokens") or usage.get("token_count")
-            if hasattr(usage, "total_tokens"):
-                return usage.total_tokens
-        return None
-
     try:
-        if request.provider == "anthropic":
-            client = anthropic.Anthropic(api_key=api_key)
-            message = client.messages.create(
-                model="claude-3-5-sonnet-20241022",
-                max_tokens=1024,
-                system=system_prompt,
-                messages=[{"role": "user", "content": user_content}]
-            )
-            refined = message.content[0].text if message.content else ""
-            if not refined: refined = "⚠️ L'IA Anthropic a renvoyé une réponse vide."
-            token_count = extract_token_count(message)
-            print(f"Anthropic refined prompt length: {len(refined)}")
-            return {"refined_prompt": refined, "token_count": token_count}
-
-        elif request.provider in ("openai", "chatgpt"):
-            client = openai.OpenAI(api_key=api_key)
-            response = client.chat.completions.create(
-                model="gpt-4o-mini",
-                messages=[
-                    {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": user_content}
-                ]
-            )
-            refined = response.choices[0].message.content if response.choices else ""
-            if not refined: refined = "⚠️ L'IA OpenAI a renvoyé une réponse vide."
-            token_count = extract_token_count(response)
-            print(f"OpenAI/ChatGPT refined prompt length: {len(refined)}")
-            return {"refined_prompt": refined, "token_count": token_count}
-
-        elif request.provider == "gemini":
-            client = genai.Client(api_key=api_key)
-            response = client.models.generate_content(
-                model='gemini-2.5-flash',
-                contents=user_content,
-                config=genai.types.GenerateContentConfig(
-                    system_instruction=system_prompt,
-                ),
-            )
-            refined = response.text if response.text else ""
-            if not refined: refined = "⚠️ L'IA Gemini a renvoyé une réponse vide."
-            token_count = extract_token_count(response)
-            print(f"Gemini refined prompt length: {len(refined)}")
-            return {"refined_prompt": refined, "token_count": token_count}
-
-        else:
-            raise HTTPException(status_code=400, detail="Fournisseur IA non supporté.")
-
-    except HTTPException:
-        raise
+        refined, token_count = call_llm(request.provider, api_key, _REFINE_SYSTEM_PROMPT, user_content, max_tokens=1024)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+    if not refined:
+        refined = "⚠️ L'IA a renvoyé une réponse vide."
+    logging.info("Refine prompt — provider: %s, length: %d", request.provider, len(refined))
+    return {"refined_prompt": refined, "token_count": token_count}
 
 # ──────────────────────────────────────────────
 # Fichiers statiques — montés EN DERNIER

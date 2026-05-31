@@ -1,0 +1,35 @@
+{
+  "model": "product.template",
+  "label": "Modèle de produit",
+  "key_fields": {
+    "name": "Char (required, translate=True) — nom du produit",
+    "type": "Selection(['consu','service','product']) — type : consommable / service / stockable (product=stockable en v17+)",
+    "categ_id": "Many2one('product.category', required=True) — catégorie interne",
+    "list_price": "Float — prix de vente public",
+    "standard_price": "Float (company_dependent=True) — coût (valorisation)",
+    "uom_id": "Many2one('uom.uom', required=True) — unité de vente",
+    "uom_po_id": "Many2one('uom.uom') — unité d'achat",
+    "sale_ok": "Boolean — peut être vendu",
+    "purchase_ok": "Boolean — peut être acheté",
+    "taxes_id": "Many2many('account.tax') — taxes client",
+    "supplier_taxes_id": "Many2many('account.tax') — taxes fournisseur",
+    "property_account_income_id": "Many2one('account.account') — compte de revenus (company_dependent)",
+    "property_account_expense_id": "Many2one('account.account') — compte de charges (company_dependent)",
+    "route_ids": "Many2many('stock.route') — routes logistiques (Acheter, Fabriquer, MTO...)",
+    "product_variant_ids": "One2many('product.product', 'product_tmpl_id') — variantes",
+    "product_variant_id": "Many2one('product.product') — variante unique (accès rapide si pas d'attributs)",
+    "active": "Boolean",
+    "description_sale": "Text — description affichée sur devis",
+    "description_purchase": "Text — description affichée sur commandes achat"
+  },
+  "common_methods": [
+    "_get_combination_info() — prix et disponibilité pour une combinaison d'attributs",
+    "action_open_quants() — voir le stock par emplacement",
+    "toggle_active() — archiver / désarchiver"
+  ],
+  "version_notes": {
+    "17": "type='product' pour les articles stockables (l'UI affiche 'Storable Product' mais la valeur en base est 'product'). standard_price est company_dependent.",
+    "18": "Nouveau type 'combo' pour les produits composites (PoS). Changements sur la valorisation des produits.",
+    "19": "Vérifier les changements sur product.template liés aux nouvelles règles de valorisation et au moteur de prix."
+  }
+}

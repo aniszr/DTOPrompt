@@ -1,0 +1,32 @@
+{
+  "model": "mrp.production",
+  "label": "Ordre de fabrication",
+  "key_fields": {
+    "name": "Char (sequence, readonly)",
+    "product_id": "Many2one('product.product', required=True) — produit fini à fabriquer",
+    "product_tmpl_id": "Many2one('product.template') — related de product_id.product_tmpl_id",
+    "product_qty": "Float (required) — quantité à produire",
+    "product_uom_id": "Many2one('uom.uom') — unité de mesure",
+    "bom_id": "Many2one('mrp.bom') — nomenclature utilisée",
+    "state": "Selection(['draft','confirmed','progress','to_close','done','cancel'])",
+    "date_start": "Datetime — début planifié",
+    "date_finished": "Datetime — fin réelle",
+    "move_raw_ids": "One2many('stock.move', 'raw_material_production_id') — mouvements des composants",
+    "move_finished_ids": "One2many('stock.move', 'production_id') — mouvements des produits finis",
+    "workorder_ids": "One2many('mrp.workorder', 'production_id') — opérations de fabrication",
+    "lot_producing_id": "Many2one('stock.lot') — numéro de série/lot du produit fini",
+    "qty_producing": "Float — quantité actuellement en cours de production",
+    "company_id": "Many2one('res.company')"
+  },
+  "common_methods": [
+    "action_confirm() — confirmer l'ordre de fabrication",
+    "button_plan() — planifier les opérations sur les postes de charge",
+    "button_mark_done() — terminer et valider la production",
+    "action_cancel() — annuler"
+  ],
+  "version_notes": {
+    "17": "Le champ routing_id a été supprimé. Les opérations sont définies directement sur mrp.bom via workcenter_id sur les lignes de nomenclature.",
+    "18": "Nouveau planning des capacités avec date_start remplaçant date_planned_start. Amélioration du suivi des composants.",
+    "19": "Refactorisation majeure du module MRP. Vérifier la compatibilité des surcharges de button_mark_done et action_confirm."
+  }
+}

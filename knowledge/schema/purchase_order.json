@@ -1,0 +1,42 @@
+{
+  "model": "purchase.order",
+  "label": "Bon de commande fournisseur",
+  "key_fields": {
+    "name": "Char (sequence, readonly)",
+    "partner_id": "Many2one('res.partner', required=True) — fournisseur",
+    "order_line": "One2many('purchase.order.line', 'order_id') — lignes de commande",
+    "state": "Selection(['draft','sent','to approve','purchase','done','cancel'])",
+    "date_order": "Datetime — date de la commande",
+    "date_approve": "Datetime — date d'approbation",
+    "date_planned": "Datetime — date de livraison prévue (agrégée depuis les lignes)",
+    "amount_untaxed": "Monetary (compute, store=True) — total HT",
+    "amount_total": "Monetary (compute, store=True) — total TTC",
+    "currency_id": "Many2one('res.currency')",
+    "invoice_ids": "Many2many('account.move') — factures fournisseur liées",
+    "invoice_status": "Selection(['nothing','to invoice','invoiced'])",
+    "picking_ids": "One2many('stock.picking') — réceptions (via les mouvements de stock)",
+    "user_id": "Many2one('res.users') — acheteur responsable",
+    "company_id": "Many2one('res.company')"
+  },
+  "order_line_fields": {
+    "order_id": "Many2one('purchase.order', ondelete='cascade')",
+    "product_id": "Many2one('product.product', required=True)",
+    "product_qty": "Float — quantité commandée",
+    "qty_received": "Float (compute) — quantité réceptionnée",
+    "qty_invoiced": "Float (compute) — quantité facturée",
+    "price_unit": "Float — prix unitaire",
+    "taxes_id": "Many2many('account.tax')",
+    "price_subtotal": "Monetary (compute, store=True)",
+    "date_planned": "Datetime — date de livraison prévue pour cette ligne"
+  },
+  "common_methods": [
+    "button_confirm() — confirmer la commande fournisseur",
+    "button_approve() — approuver (si double validation activée dans les paramètres achat)",
+    "action_create_invoice() — créer la facture fournisseur"
+  ],
+  "version_notes": {
+    "17": "Utiliser action_create_invoice() pour générer les factures fournisseur. La double validation se configure dans Achats > Configuration > Paramètres.",
+    "18": "Nouveau champ mail_reception_done pour les alertes de réception. Amélioration du suivi des retards.",
+    "19": "Vérifier les changements du module purchase liés au nouveau workflow d'approbation et aux règles de sécurité."
+  }
+}

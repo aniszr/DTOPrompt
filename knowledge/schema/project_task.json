@@ -1,0 +1,32 @@
+{
+  "model": "project.task",
+  "label": "Tâche de projet",
+  "key_fields": {
+    "name": "Char (required) — titre de la tâche",
+    "project_id": "Many2one('project.project') — projet parent",
+    "partner_id": "Many2one('res.partner') — client",
+    "user_ids": "Many2many('res.users') — assignés (v16+, remplace user_id)",
+    "stage_id": "Many2one('project.task.type', required=True) — étape (colonne kanban)",
+    "tag_ids": "Many2many('project.tags') — étiquettes",
+    "priority": "Selection(['0','1']) — 0=normale, 1=haute",
+    "state": "Selection(['01_in_progress','1_done','04_waiting_normal','03_approved','1_canceled'])",
+    "date_deadline": "Date — date d'échéance",
+    "planned_hours": "Float — heures prévues",
+    "effective_hours": "Float (compute) — heures réelles (depuis les timesheets)",
+    "timesheet_ids": "One2many('account.analytic.line', 'task_id') — feuilles de temps",
+    "child_ids": "One2many('project.task', 'parent_id') — sous-tâches",
+    "parent_id": "Many2one('project.task') — tâche parente",
+    "description": "Html — description détaillée",
+    "active": "Boolean"
+  },
+  "common_methods": [
+    "action_assign_to_me() — s'assigner la tâche",
+    "_get_default_stage_id() — étape par défaut selon le projet",
+    "write() — mise à jour ; déclenche les notifications si user_ids change"
+  ],
+  "version_notes": {
+    "17": "user_ids (Many2many) remplace user_id (Many2one) depuis v16. Le champ kanban_state est remplacé par state. Utiliser state='1_done' pour les tâches terminées.",
+    "18": "Nouveau champ depend_on_ids pour les dépendances entre tâches. Amélioration du suivi du temps.",
+    "19": "Vérifier les changements liés au module project pour les nouvelles vues et le workflow d'approbation."
+  }
+}

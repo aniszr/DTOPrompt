@@ -1,0 +1,32 @@
+{
+  "model": "hr.employee",
+  "label": "Employé",
+  "key_fields": {
+    "name": "Char (required) — nom complet",
+    "user_id": "Many2one('res.users') — utilisateur Odoo lié (optionnel)",
+    "job_id": "Many2one('hr.job') — poste",
+    "job_title": "Char — intitulé personnalisé du poste",
+    "department_id": "Many2one('hr.department')",
+    "parent_id": "Many2one('hr.employee') — manager direct",
+    "coach_id": "Many2one('hr.employee') — coach / référent",
+    "work_email": "Char",
+    "mobile_phone": "Char",
+    "work_phone": "Char",
+    "address_id": "Many2one('res.partner') — adresse de travail",
+    "company_id": "Many2one('res.company')",
+    "active": "Boolean",
+    "image_1920": "Image — photo de l'employé",
+    "contract_ids": "One2many('hr.contract', 'employee_id') — contrats (module payroll requis)",
+    "slip_ids": "One2many('hr.payslip', 'employee_id') — bulletins de salaire (module payroll requis)"
+  },
+  "common_methods": [
+    "_get_related_employees() — récupérer les employés subordonnés",
+    "action_related_contacts() — voir le partenaire associé",
+    "sudo() — requis pour accéder aux données sensibles depuis des règles d'accès restrictives"
+  ],
+  "version_notes": {
+    "17": "hr.employee est séparé de hr.employee.public. Utiliser sudo() pour accéder aux données sensibles depuis les portails ou règles restrictives.",
+    "18": "Nouveau modèle hr.employee.skill pour les compétences. Le champ km_home_work est déplacé.",
+    "19": "Vérifier les droits d'accès sur hr.employee liés au nouveau système d'environnement et aux règles de sécurité."
+  }
+}
